@@ -11,7 +11,7 @@ class Soundboard {
         this.isRecording = false;
         this.recordedNotes = [];
         this.recordStartTime = null;
-        this.playbackTimeout = null;
+        this.playbackTimeouts = [];
         
         this.soundMap = this.createSoundMap();
         this.init();
@@ -740,35 +740,37 @@ class Soundboard {
         });
 
         stopBtn.addEventListener('click', () => {
-            this.stopRecording();
+            this.stopPlayback();
         });
 
         clearBtn.addEventListener('click', () => {
             this.recordedNotes = [];
             playBtn.disabled = true;
             stopBtn.disabled = true;
-            this.stopRecording();
+            this.stopPlayback();
         });
     }
 
     playRecording() {
         if (this.recordedNotes.length === 0) return;
 
+        this.playbackTimeouts = [];
         this.recordedNotes.forEach(note => {
-            this.playbackTimeout = setTimeout(() => {
+            const timeoutId = setTimeout(() => {
                 this.playSound(note.soundId);
                 const keyElement = document.querySelector(`[data-sound="${note.soundId}"]`);
                 if (keyElement) {
                     this.animateKey(keyElement);
                 }
             }, note.timestamp);
+            this.playbackTimeouts.push(timeoutId);
         });
     }
 
-    stopRecording() {
-        if (this.playbackTimeout) {
-            clearTimeout(this.playbackTimeout);
-            this.playbackTimeout = null;
+    stopPlayback() {
+        if (this.playbackTimeouts) {
+            this.playbackTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+            this.playbackTimeouts = [];
         }
     }
 
