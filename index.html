@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDubboard - QWERTY Keyboard Soundboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 MDubboard</h1>
+            <p class="subtitle">QWERTY Keyboard Soundboard - Drop the Bass!</p>
+        </header>
+
+        <div class="controls">
+            <button id="recordBtn" class="control-btn">
+                <span class="icon">⏺</span> Record
+            </button>
+            <button id="playBtn" class="control-btn" disabled>
+                <span class="icon">▶</span> Play
+            </button>
+            <button id="stopBtn" class="control-btn" disabled>
+                <span class="icon">⏹</span> Stop
+            </button>
+            <button id="clearBtn" class="control-btn">
+                <span class="icon">🗑</span> Clear
+            </button>
+            <div class="volume-control">
+                <label for="volumeSlider">Volume:</label>
+                <input type="range" id="volumeSlider" min="0" max="100" value="70">
+                <span id="volumeValue">70%</span>
+            </div>
+        </div>
+
+        <div class="sound-categories">
+            <button class="category-btn active" data-category="all">All Sounds</button>
+            <button class="category-btn" data-category="bass">Bass</button>
+            <button class="category-btn" data-category="drums">Drums</button>
+            <button class="category-btn" data-category="wobble">Wobble</button>
+            <button class="category-btn" data-category="synth">Synth</button>
+            <button class="category-btn" data-category="fx">FX</button>
+        </div>
+
+        <div id="recording-status" class="recording-status" style="display: none;">
+            <span class="rec-indicator">⏺ REC</span>
+            <span id="recTime">0.0s</span>
+        </div>
+
+        <div class="keyboard-container">
+            <!-- Row 1: Numbers -->
+            <div class="keyboard-row">
+                <div class="key" data-key="1" data-sound="bass1">
+                    <span class="key-label">1</span>
+                    <span class="sound-label">Deep Bass</span>
+                </div>
+                <div class="key" data-key="2" data-sound="bass2">
+                    <span class="key-label">2</span>
+                    <span class="sound-label">Sub Bass</span>
+                </div>
+                <div class="key" data-key="3" data-sound="bass3">
+                    <span class="key-label">3</span>
+                    <span class="sound-label">808 Bass</span>
+                </div>
+                <div class="key" data-key="4" data-sound="wobble1">
+                    <span class="key-label">4</span>
+                    <span class="sound-label">Wobble 1</span>
+                </div>
+                <div class="key" data-key="5" data-sound="wobble2">
+                    <span class="key-label">5</span>
+                    <span class="sound-label">Wobble 2</span>
+                </div>
+                <div class="key" data-key="6" data-sound="wobble3">
+                    <span class="key-label">6</span>
+                    <span class="sound-label">LFO Wobble</span>
+                </div>
+                <div class="key" data-key="7" data-sound="fx1">
+                    <span class="key-label">7</span>
+                    <span class="sound-label">Riser</span>
+                </div>
+                <div class="key" data-key="8" data-sound="fx2">
+                    <span class="key-label">8</span>
+                    <span class="sound-label">Impact</span>
+                </div>
+                <div class="key" data-key="9" data-sound="fx3">
+                    <span class="key-label">9</span>
+                    <span class="sound-label">Sweep</span>
+                </div>
+                <div class="key" data-key="0" data-sound="fx4">
+                    <span class="key-label">0</span>
+                    <span class="sound-label">Reverse</span>
+                </div>
+            </div>
+
+            <!-- Row 2: QWERTY -->
+            <div class="keyboard-row">
+                <div class="key" data-key="q" data-sound="kick1">
+                    <span class="key-label">Q</span>
+                    <span class="sound-label">Kick 1</span>
+                </div>
+                <div class="key" data-key="w" data-sound="kick2">
+                    <span class="key-label">W</span>
+                    <span class="sound-label">Kick 2</span>
+                </div>
+                <div class="key" data-key="e" data-sound="snare1">
+                    <span class="key-label">E</span>
+                    <span class="sound-label">Snare 1</span>
+                </div>
+                <div class="key" data-key="r" data-sound="snare2">
+                    <span class="key-label">R</span>
+                    <span class="sound-label">Snare 2</span>
+                </div>
+                <div class="key" data-key="t" data-sound="clap">
+                    <span class="key-label">T</span>
+                    <span class="sound-label">Clap</span>
+                </div>
+                <div class="key" data-key="y" data-sound="hihat1">
+                    <span class="key-label">Y</span>
+                    <span class="sound-label">Hi-Hat C</span>
+                </div>
+                <div class="key" data-key="u" data-sound="hihat2">
+                    <span class="key-label">U</span>
+                    <span class="sound-label">Hi-Hat O</span>
+                </div>
+                <div class="key" data-key="i" data-sound="perc1">
+                    <span class="key-label">I</span>
+                    <span class="sound-label">Perc 1</span>
+                </div>
+                <div class="key" data-key="o" data-sound="perc2">
+                    <span class="key-label">O</span>
+                    <span class="sound-label">Perc 2</span>
+                </div>
+                <div class="key" data-key="p" data-sound="crash">
+                    <span class="key-label">P</span>
+                    <span class="sound-label">Crash</span>
+                </div>
+            </div>
+
+            <!-- Row 3: ASDFGH -->
+            <div class="keyboard-row">
+                <div class="key" data-key="a" data-sound="synth1">
+                    <span class="key-label">A</span>
+                    <span class="sound-label">Synth C</span>
+                </div>
+                <div class="key" data-key="s" data-sound="synth2">
+                    <span class="key-label">S</span>
+                    <span class="sound-label">Synth D</span>
+                </div>
+                <div class="key" data-key="d" data-sound="synth3">
+                    <span class="key-label">D</span>
+                    <span class="sound-label">Synth E</span>
+                </div>
+                <div class="key" data-key="f" data-sound="synth4">
+                    <span class="key-label">F</span>
+                    <span class="sound-label">Synth F</span>
+                </div>
+                <div class="key" data-key="g" data-sound="synth5">
+                    <span class="key-label">G</span>
+                    <span class="sound-label">Synth G</span>
+                </div>
+                <div class="key" data-key="h" data-sound="synth6">
+                    <span class="key-label">H</span>
+                    <span class="sound-label">Synth A</span>
+                </div>
+                <div class="key" data-key="j" data-sound="synth7">
+                    <span class="key-label">J</span>
+                    <span class="sound-label">Synth B</span>
+                </div>
+                <div class="key" data-key="k" data-sound="lead1">
+                    <span class="key-label">K</span>
+                    <span class="sound-label">Lead 1</span>
+                </div>
+                <div class="key" data-key="l" data-sound="lead2">
+                    <span class="key-label">L</span>
+                    <span class="sound-label">Lead 2</span>
+                </div>
+            </div>
+
+            <!-- Row 4: ZXCVBN -->
+            <div class="keyboard-row">
+                <div class="key" data-key="z" data-sound="pad1">
+                    <span class="key-label">Z</span>
+                    <span class="sound-label">Pad 1</span>
+                </div>
+                <div class="key" data-key="x" data-sound="pad2">
+                    <span class="key-label">X</span>
+                    <span class="sound-label">Pad 2</span>
+                </div>
+                <div class="key" data-key="c" data-sound="pad3">
+                    <span class="key-label">C</span>
+                    <span class="sound-label">Pad 3</span>
+                </div>
+                <div class="key" data-key="v" data-sound="vocal1">
+                    <span class="key-label">V</span>
+                    <span class="sound-label">Vocal 1</span>
+                </div>
+                <div class="key" data-key="b" data-sound="vocal2">
+                    <span class="key-label">B</span>
+                    <span class="sound-label">Vocal 2</span>
+                </div>
+                <div class="key" data-key="n" data-sound="vocal3">
+                    <span class="key-label">N</span>
+                    <span class="sound-label">Vocal 3</span>
+                </div>
+                <div class="key" data-key="m" data-sound="scratch">
+                    <span class="key-label">M</span>
+                    <span class="sound-label">Scratch</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h3>How to Use:</h3>
+            <ul>
+                <li>Press keys on your keyboard to trigger sounds</li>
+                <li>Click "Record" to start recording your session</li>
+                <li>Click "Stop Recording" and then "Play" to hear your recording</li>
+                <li>Use category buttons to filter sounds</li>
+                <li>Adjust volume with the slider</li>
+                <li>Get creative and make some dubstep!</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>MDubboard v1.0 | Drop the bass, break the speakers 🔊</p>
+        </footer>
+    </div>
+
+    <script src="soundboard.js"></script>
+</body>
+</html>
