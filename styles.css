@@ -279,6 +279,208 @@ h1 {
     color: #00d9ff;
 }
 
+/* AI Song Generator Section */
+.ai-section {
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.15) 0%, rgba(75, 0, 130, 0.15) 100%);
+    border: 2px solid rgba(138, 43, 226, 0.4);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 30px rgba(138, 43, 226, 0.3);
+}
+
+.ai-section h2 {
+    color: #b19cd9;
+    text-align: center;
+    font-size: 2em;
+    margin-bottom: 10px;
+    text-shadow: 0 0 15px rgba(177, 156, 217, 0.6);
+}
+
+.ai-subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 25px;
+    font-size: 1.1em;
+}
+
+.ai-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.api-key-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.api-key-section label {
+    font-weight: bold;
+    color: #b19cd9;
+}
+
+.api-key-section input {
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(138, 43, 226, 0.4);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1em;
+}
+
+.api-key-section input:focus {
+    outline: none;
+    border-color: rgba(138, 43, 226, 0.8);
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+}
+
+.api-key-section small {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85em;
+}
+
+.api-key-section small a {
+    color: #b19cd9;
+    text-decoration: none;
+}
+
+.api-key-section small a:hover {
+    text-decoration: underline;
+}
+
+.style-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.style-btn {
+    padding: 12px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.6) 0%, rgba(75, 0, 130, 0.6) 100%);
+    border: 2px solid rgba(138, 43, 226, 0.6);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.style-btn:hover {
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.9) 0%, rgba(75, 0, 130, 0.9) 100%);
+    border-color: rgba(138, 43, 226, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(138, 43, 226, 0.5);
+}
+
+.style-btn:active {
+    transform: translateY(0);
+}
+
+.custom-prompt-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.custom-prompt-section label {
+    font-weight: bold;
+    color: #b19cd9;
+}
+
+.custom-prompt-section input {
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(138, 43, 226, 0.4);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1em;
+}
+
+.custom-prompt-section input:focus {
+    outline: none;
+    border-color: rgba(138, 43, 226, 0.8);
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+}
+
+.generate-btn {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #9d4edd 0%, #7209b7 100%);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(157, 78, 221, 0.4);
+    margin: 10px auto;
+    display: block;
+}
+
+.generate-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(157, 78, 221, 0.6);
+    background: linear-gradient(135deg, #b185db 0%, #8b4fc9 100%);
+}
+
+.generate-btn:active {
+    transform: translateY(0);
+}
+
+.generating-status {
+    text-align: center;
+    padding: 20px;
+    background: rgba(138, 43, 226, 0.2);
+    border: 2px solid rgba(138, 43, 226, 0.5);
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.spinner {
+    font-size: 1.5em;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.song-result {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(138, 43, 226, 0.6);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.song-result h3 {
+    color: #b19cd9;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+.song-result p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.song-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
 footer {
     text-align: center;
     padding: 20px;
