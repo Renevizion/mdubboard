@@ -837,14 +837,14 @@ class Soundboard {
         generateBtn.addEventListener('click', async () => {
             const apiKey = document.getElementById('apiKey').value;
             const customPrompt = document.getElementById('customPrompt').value;
+            const style = customPrompt || selectedStyle || 'dubstep';
             
             if (!apiKey) {
-                alert('Please enter your Gemini API key');
-                return;
+                // Use fallback structure without API
+                this.generateSongWithFallback(style);
+            } else {
+                await this.generateSongWithAI(apiKey, style);
             }
-
-            const style = customPrompt || selectedStyle || 'dubstep';
-            await this.generateSongWithAI(apiKey, style);
         });
 
         playSongBtn.addEventListener('click', () => {
@@ -860,9 +860,35 @@ class Soundboard {
                 this.recordedNotes = this.generatedSong.notes;
                 document.getElementById('playBtn').disabled = false;
                 document.getElementById('stopBtn').disabled = false;
-                alert('Song saved to recording! You can now play it using the Play button.');
+                // Show success message briefly
+                const resultDiv = document.getElementById('songResult');
+                const originalText = document.getElementById('songDescription').textContent;
+                document.getElementById('songDescription').textContent = '✅ Song saved! Use the Play button above to hear it.';
+                setTimeout(() => {
+                    document.getElementById('songDescription').textContent = originalText;
+                }, 3000);
             }
         });
+    }
+
+    generateSongWithFallback(style) {
+        const generatingStatus = document.getElementById('generatingStatus');
+        const songResult = document.getElementById('songResult');
+        
+        generatingStatus.style.display = 'flex';
+        songResult.style.display = 'none';
+
+        // Use fallback structure
+        setTimeout(() => {
+            const songStructure = this.getFallbackStructure(style);
+            this.generatedSong = this.createSongFromStructure(songStructure, style);
+            
+            // Display results
+            generatingStatus.style.display = 'none';
+            songResult.style.display = 'block';
+            document.getElementById('songDescription').textContent = songStructure.description + 
+                ` (Generated using fallback structure. Add API key for AI-powered generation.)`;
+        }, 1000); // Simulate processing time
     }
 
     async generateSongWithAI(apiKey, style) {
@@ -887,8 +913,9 @@ class Soundboard {
             
         } catch (error) {
             generatingStatus.style.display = 'none';
-            alert('Error generating song: ' + error.message);
-            console.error('Error:', error);
+            // Fall back to non-AI generation
+            console.warn('API error, using fallback:', error);
+            this.generateSongWithFallback(style);
         }
     }
 
@@ -915,10 +942,19 @@ class Soundboard {
         });
 
         if (!response.ok) {
-            throw new Error(`API request failed: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`API request failed (${response.status} ${response.statusText}): ${errorText.substring(0, 100)}`);
         }
 
         const data = await response.json();
+        
+        // Validate response structure
+        if (!data.candidates || !data.candidates[0] || 
+            !data.candidates[0].content || !data.candidates[0].content.parts || 
+            !data.candidates[0].content.parts[0]) {
+            throw new Error('Invalid API response structure');
+        }
+        
         const text = data.candidates[0].content.parts[0].text;
         
         // Parse the AI response
