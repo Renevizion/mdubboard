@@ -13,6 +13,10 @@ class Soundboard {
         this.recordStartTime = null;
         this.playbackTimeouts = [];
         
+        // AI Song Generation
+        this.generatedSong = null;
+        this.isSongPlaying = false;
+        
         this.soundMap = this.createSoundMap();
         this.init();
     }
@@ -22,6 +26,7 @@ class Soundboard {
         this.setupControlListeners();
         this.setupCategoryFilters();
         this.setupVolumeControl();
+        this.setupAIControls();
     }
 
     createSoundMap() {
@@ -810,6 +815,356 @@ class Soundboard {
             this.masterGain.gain.value = volume;
             volumeValue.textContent = e.target.value + '%';
         });
+    }
+
+    setupAIControls() {
+        const generateBtn = document.getElementById('generateSongBtn');
+        const playSongBtn = document.getElementById('playSongBtn');
+        const stopSongBtn = document.getElementById('stopSongBtn');
+        const saveSongBtn = document.getElementById('saveSongBtn');
+        const styleButtons = document.querySelectorAll('.style-btn');
+        
+        let selectedStyle = '';
+
+        styleButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                styleButtons.forEach(b => b.style.background = '');
+                btn.style.background = 'linear-gradient(135deg, rgba(138, 43, 226, 0.9) 0%, rgba(75, 0, 130, 0.9) 100%)';
+                selectedStyle = btn.dataset.style;
+            });
+        });
+
+        generateBtn.addEventListener('click', async () => {
+            const apiKey = document.getElementById('apiKey').value;
+            const customPrompt = document.getElementById('customPrompt').value;
+            
+            if (!apiKey) {
+                alert('Please enter your Gemini API key');
+                return;
+            }
+
+            const style = customPrompt || selectedStyle || 'dubstep';
+            await this.generateSongWithAI(apiKey, style);
+        });
+
+        playSongBtn.addEventListener('click', () => {
+            this.playSong();
+        });
+
+        stopSongBtn.addEventListener('click', () => {
+            this.stopSong();
+        });
+
+        saveSongBtn.addEventListener('click', () => {
+            if (this.generatedSong) {
+                this.recordedNotes = this.generatedSong.notes;
+                document.getElementById('playBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = false;
+                alert('Song saved to recording! You can now play it using the Play button.');
+            }
+        });
+    }
+
+    async generateSongWithAI(apiKey, style) {
+        const generatingStatus = document.getElementById('generatingStatus');
+        const songResult = document.getElementById('songResult');
+        
+        generatingStatus.style.display = 'flex';
+        songResult.style.display = 'none';
+
+        try {
+            // Call Gemini API to get song structure
+            const songStructure = await this.callGeminiAPI(apiKey, style);
+            
+            // Generate the actual song pattern
+            this.generatedSong = this.createSongFromStructure(songStructure, style);
+            
+            // Display results
+            generatingStatus.style.display = 'none';
+            songResult.style.display = 'block';
+            document.getElementById('songDescription').textContent = songStructure.description || 
+                `A ${style} song with ${songStructure.sections.length} sections, ${songStructure.bpm} BPM`;
+            
+        } catch (error) {
+            generatingStatus.style.display = 'none';
+            alert('Error generating song: ' + error.message);
+            console.error('Error:', error);
+        }
+    }
+
+    async callGeminiAPI(apiKey, style) {
+        const prompt = this.buildMusicPrompt(style);
+        
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }],
+                generationConfig: {
+                    temperature: 0.9,
+                    topK: 40,
+                    topP: 0.95,
+                }
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`API request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const text = data.candidates[0].content.parts[0].text;
+        
+        // Parse the AI response
+        return this.parseAIResponse(text, style);
+    }
+
+    buildMusicPrompt(style) {
+        const styleDescriptions = {
+            dubstep: 'aggressive dubstep like Skrillex with heavy bass drops, wobbles, and intense energy',
+            rap: 'hard-hitting rap beat like Tupac or Biggie with strong kicks and snares',
+            trap: 'modern trap beat like Drake with hi-hat rolls and 808s',
+            house: 'energetic house music with four-on-the-floor kick pattern',
+            afrobeat: 'rhythmic afrobeats with percussion and melodic patterns'
+        };
+
+        const description = styleDescriptions[style] || style;
+
+        return `You are a professional music producer. Create a detailed song structure for ${description}.
+
+Provide the following in JSON format:
+{
+  "bpm": <number between 120-150>,
+  "description": "<brief description of the song>",
+  "sections": [
+    {
+      "name": "<intro/verse/buildup/drop/outro>",
+      "duration": <beats, e.g., 16 or 32>,
+      "elements": ["<instrument1>", "<instrument2>"]
+    }
+  ]
+}
+
+Use these available instruments: kick, snare, hihat, bass, wobble, synth, pad, fx
+Make it a complete song with intro, verses, buildups, drops, and outro.
+Return ONLY the JSON, no other text.`;
+    }
+
+    parseAIResponse(text, style) {
+        try {
+            // Try to extract JSON from the response
+            const jsonMatch = text.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+                return JSON.parse(jsonMatch[0]);
+            }
+        } catch (e) {
+            console.warn('Failed to parse AI response, using fallback');
+        }
+        
+        // Fallback: Generate a structure based on style
+        return this.getFallbackStructure(style);
+    }
+
+    getFallbackStructure(style) {
+        const structures = {
+            dubstep: {
+                bpm: 140,
+                description: 'Heavy dubstep with aggressive drops and wobbles',
+                sections: [
+                    { name: 'intro', duration: 16, elements: ['hihat', 'pad'] },
+                    { name: 'buildup', duration: 16, elements: ['kick', 'snare', 'fx'] },
+                    { name: 'drop', duration: 32, elements: ['kick', 'snare', 'wobble', 'bass'] },
+                    { name: 'breakdown', duration: 16, elements: ['pad', 'synth'] },
+                    { name: 'drop2', duration: 32, elements: ['kick', 'snare', 'wobble', 'bass'] },
+                    { name: 'outro', duration: 16, elements: ['pad', 'hihat'] }
+                ]
+            },
+            rap: {
+                bpm: 90,
+                description: 'Classic rap beat with hard-hitting drums',
+                sections: [
+                    { name: 'intro', duration: 8, elements: ['hihat'] },
+                    { name: 'verse', duration: 32, elements: ['kick', 'snare', 'hihat'] },
+                    { name: 'chorus', duration: 16, elements: ['kick', 'snare', 'hihat', 'synth'] },
+                    { name: 'verse2', duration: 32, elements: ['kick', 'snare', 'hihat', 'bass'] },
+                    { name: 'chorus2', duration: 16, elements: ['kick', 'snare', 'hihat', 'synth'] },
+                    { name: 'outro', duration: 8, elements: ['hihat', 'pad'] }
+                ]
+            },
+            trap: {
+                bpm: 140,
+                description: 'Modern trap with hi-hat rolls and 808s',
+                sections: [
+                    { name: 'intro', duration: 16, elements: ['hihat'] },
+                    { name: 'verse', duration: 32, elements: ['kick', 'snare', 'hihat', 'bass'] },
+                    { name: 'chorus', duration: 32, elements: ['kick', 'snare', 'hihat', 'synth', 'bass'] },
+                    { name: 'verse2', duration: 32, elements: ['kick', 'snare', 'hihat', 'bass'] },
+                    { name: 'outro', duration: 16, elements: ['hihat', 'pad'] }
+                ]
+            },
+            house: {
+                bpm: 128,
+                description: 'Energetic house music with four-on-the-floor',
+                sections: [
+                    { name: 'intro', duration: 16, elements: ['kick', 'hihat'] },
+                    { name: 'buildup', duration: 16, elements: ['kick', 'hihat', 'synth', 'fx'] },
+                    { name: 'drop', duration: 32, elements: ['kick', 'hihat', 'bass', 'synth'] },
+                    { name: 'breakdown', duration: 16, elements: ['pad', 'synth'] },
+                    { name: 'drop2', duration: 32, elements: ['kick', 'hihat', 'bass', 'synth'] },
+                    { name: 'outro', duration: 16, elements: ['kick', 'hihat'] }
+                ]
+            },
+            afrobeat: {
+                bpm: 110,
+                description: 'Rhythmic afrobeats with percussive elements',
+                sections: [
+                    { name: 'intro', duration: 8, elements: ['perc', 'hihat'] },
+                    { name: 'verse', duration: 32, elements: ['kick', 'snare', 'perc', 'hihat', 'synth'] },
+                    { name: 'chorus', duration: 32, elements: ['kick', 'snare', 'perc', 'hihat', 'synth', 'bass'] },
+                    { name: 'verse2', duration: 32, elements: ['kick', 'snare', 'perc', 'hihat', 'pad'] },
+                    { name: 'outro', duration: 16, elements: ['perc', 'pad'] }
+                ]
+            }
+        };
+
+        return structures[style] || structures.dubstep;
+    }
+
+    createSongFromStructure(structure, style) {
+        const beatDuration = 60000 / structure.bpm; // Duration of one beat in ms
+        const notes = [];
+        let currentTime = 0;
+
+        structure.sections.forEach(section => {
+            const sectionDuration = section.duration * beatDuration;
+            const sectionNotes = this.generateSectionNotes(section, beatDuration, currentTime);
+            notes.push(...sectionNotes);
+            currentTime += sectionDuration;
+        });
+
+        return {
+            bpm: structure.bpm,
+            description: structure.description,
+            notes: notes,
+            duration: currentTime
+        };
+    }
+
+    generateSectionNotes(section, beatDuration, startTime) {
+        const notes = [];
+        const beats = section.duration;
+        
+        // Map elements to sound IDs
+        const elementMap = {
+            kick: ['kick1', 'kick2'],
+            snare: ['snare1', 'snare2'],
+            hihat: ['hihat1', 'hihat2'],
+            bass: ['bass1', 'bass2', 'bass3'],
+            wobble: ['wobble1', 'wobble2', 'wobble3'],
+            synth: ['synth1', 'synth2', 'synth3', 'synth4', 'synth5', 'synth6', 'synth7'],
+            pad: ['pad1', 'pad2', 'pad3'],
+            perc: ['perc1', 'perc2'],
+            fx: ['fx1', 'fx2', 'fx3', 'fx4']
+        };
+
+        section.elements.forEach(element => {
+            const sounds = elementMap[element] || [element + '1'];
+            
+            // Different patterns for different elements
+            if (element === 'kick') {
+                // Kick on 1 and 3
+                for (let i = 0; i < beats; i += 4) {
+                    notes.push({ soundId: sounds[0], timestamp: startTime + i * beatDuration });
+                    if (i + 2 < beats) {
+                        notes.push({ soundId: sounds[0], timestamp: startTime + (i + 2) * beatDuration });
+                    }
+                }
+            } else if (element === 'snare') {
+                // Snare on 2 and 4
+                for (let i = 1; i < beats; i += 2) {
+                    notes.push({ soundId: sounds[Math.floor(Math.random() * sounds.length)], 
+                               timestamp: startTime + i * beatDuration });
+                }
+            } else if (element === 'hihat') {
+                // Hi-hat on every beat or eighth note
+                for (let i = 0; i < beats * 2; i++) {
+                    notes.push({ soundId: sounds[i % 2], 
+                               timestamp: startTime + i * beatDuration / 2 });
+                }
+            } else if (element === 'bass' || element === 'wobble') {
+                // Bass on musical intervals
+                for (let i = 0; i < beats; i += 2) {
+                    notes.push({ soundId: sounds[Math.floor(Math.random() * sounds.length)], 
+                               timestamp: startTime + i * beatDuration });
+                }
+            } else if (element === 'synth') {
+                // Synth melodies
+                for (let i = 0; i < beats; i += 4) {
+                    const numNotes = Math.floor(Math.random() * 3) + 1;
+                    for (let j = 0; j < numNotes; j++) {
+                        notes.push({ 
+                            soundId: sounds[Math.floor(Math.random() * sounds.length)], 
+                            timestamp: startTime + (i + j * 0.5) * beatDuration 
+                        });
+                    }
+                }
+            } else if (element === 'pad') {
+                // Pads sustain
+                for (let i = 0; i < beats; i += 8) {
+                    notes.push({ soundId: sounds[Math.floor(Math.random() * sounds.length)], 
+                               timestamp: startTime + i * beatDuration });
+                }
+            } else if (element === 'perc') {
+                // Percussion fills
+                for (let i = 0; i < beats; i += 3) {
+                    notes.push({ soundId: sounds[Math.floor(Math.random() * sounds.length)], 
+                               timestamp: startTime + i * beatDuration });
+                }
+            } else if (element === 'fx') {
+                // FX at section start
+                notes.push({ soundId: sounds[Math.floor(Math.random() * sounds.length)], 
+                           timestamp: startTime });
+            }
+        });
+
+        return notes;
+    }
+
+    playSong() {
+        if (!this.generatedSong || this.isSongPlaying) return;
+        
+        this.isSongPlaying = true;
+        this.playbackTimeouts = [];
+        
+        this.generatedSong.notes.forEach(note => {
+            const timeoutId = setTimeout(() => {
+                this.playSound(note.soundId);
+                const keyElement = document.querySelector(`[data-sound="${note.soundId}"]`);
+                if (keyElement) {
+                    this.animateKey(keyElement);
+                }
+            }, note.timestamp);
+            this.playbackTimeouts.push(timeoutId);
+        });
+
+        // Auto-stop after song duration
+        setTimeout(() => {
+            this.isSongPlaying = false;
+        }, this.generatedSong.duration + 1000);
+    }
+
+    stopSong() {
+        if (this.playbackTimeouts) {
+            this.playbackTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+            this.playbackTimeouts = [];
+        }
+        this.isSongPlaying = false;
     }
 }
 

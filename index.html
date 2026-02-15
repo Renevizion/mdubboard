@@ -209,6 +209,49 @@
             </div>
         </div>
 
+        <div class="ai-section">
+            <h2>🤖 AI Song Generator</h2>
+            <p class="ai-subtitle">Let Gemini AI create songs for you!</p>
+            
+            <div class="ai-controls">
+                <div class="api-key-section">
+                    <label for="apiKey">Gemini API Key:</label>
+                    <input type="password" id="apiKey" placeholder="Enter your Gemini API key">
+                    <small>Get your free API key at <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></small>
+                </div>
+
+                <div class="style-presets">
+                    <button class="style-btn" data-style="dubstep">🔊 Dubstep (Skrillex)</button>
+                    <button class="style-btn" data-style="rap">🎤 Rap Beat (Tupac/Biggie)</button>
+                    <button class="style-btn" data-style="trap">💎 Trap (Drake)</button>
+                    <button class="style-btn" data-style="house">🏠 House Music</button>
+                    <button class="style-btn" data-style="afrobeat">🌍 Afrobeats</button>
+                </div>
+
+                <div class="custom-prompt-section">
+                    <label for="customPrompt">Or describe your own style:</label>
+                    <input type="text" id="customPrompt" placeholder="e.g., 'chill lo-fi beats like Nujabes'">
+                </div>
+
+                <button id="generateSongBtn" class="generate-btn">✨ Generate Song</button>
+                
+                <div id="generatingStatus" class="generating-status" style="display: none;">
+                    <span class="spinner">⚙️</span>
+                    <span>Generating your song...</span>
+                </div>
+
+                <div id="songResult" class="song-result" style="display: none;">
+                    <h3>Generated Song:</h3>
+                    <p id="songDescription"></p>
+                    <div class="song-controls">
+                        <button id="playSongBtn" class="control-btn">▶️ Play Song</button>
+                        <button id="stopSongBtn" class="control-btn">⏹️ Stop</button>
+                        <button id="saveSongBtn" class="control-btn">💾 Save to Recording</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="info-panel">
             <h3>How to Use:</h3>
             <ul>

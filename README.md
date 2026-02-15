@@ -5,6 +5,7 @@ Drop the bass with your keyboard! MDubboard is a professional web-based soundboa
 ## Features
 
 - 🎹 **40+ High-Quality Sounds** - All synthesized in real-time using Web Audio API
+- 🤖 **AI Song Generator** - Use Google Gemini AI to create complete songs in different styles
 - 🎛️ **Multiple Sound Categories**:
   - Deep Bass & Sub-Bass
   - LFO Wobble Bass
@@ -84,6 +85,48 @@ Click on category buttons to filter sounds:
 #### Volume Control
 
 Use the volume slider to adjust the master output level (0-100%).
+
+### AI Song Generator
+
+Generate complete songs using Google Gemini AI! The AI creates musically structured compositions based on popular music styles.
+
+#### How to Use
+
+1. **Get an API Key**
+   - Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Create a free Gemini API key
+   - Paste it into the "Gemini API Key" field
+
+2. **Choose Your Style**
+   - Click one of the preset buttons:
+     - 🔊 **Dubstep (Skrillex)** - Aggressive wobbles and heavy drops
+     - 🎤 **Rap Beat (Tupac/Biggie)** - Hard-hitting drums and classic boom-bap
+     - 💎 **Trap (Drake)** - Modern trap with hi-hat rolls and 808s
+     - 🏠 **House Music** - Four-on-the-floor kicks with energetic rhythms
+     - 🌍 **Afrobeats** - Percussive patterns with melodic elements
+   - Or describe your own style in the custom prompt field
+
+3. **Generate**
+   - Click "✨ Generate Song"
+   - Wait for the AI to create your song structure
+   - The generator uses music theory to create proper arrangements with:
+     - Intros and outros
+     - Verse sections
+     - Build-ups and drops
+     - Proper BPM for the style
+     - Appropriate instruments for each section
+
+4. **Playback**
+   - Click "▶️ Play Song" to hear your generated composition
+   - Click "⏹️ Stop" to stop playback
+   - Click "💾 Save to Recording" to save it for later
+
+The AI generator creates authentic song structures by:
+- Analyzing the style and tempo requirements
+- Creating musically appropriate sections (intro, verse, chorus, drop, outro)
+- Using proper drum patterns (kick on 1 and 3, snare on 2 and 4, etc.)
+- Layering instruments appropriately for each genre
+- Following music theory principles for melody and rhythm
 
 ## Sound Design
 
