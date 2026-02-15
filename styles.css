@@ -1,0 +1,327 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #fff;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+}
+
+h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.8),
+                 0 0 40px rgba(0, 255, 255, 0.5);
+    letter-spacing: 3px;
+}
+
+.subtitle {
+    font-size: 1.2em;
+    color: #00d9ff;
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    padding: 12px 25px;
+    font-size: 1em;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #00d9ff 0%, #0099cc 100%);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 217, 255, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 217, 255, 0.5);
+    background: linear-gradient(135deg, #00ffff 0%, #00ccff 100%);
+}
+
+.control-btn:active {
+    transform: translateY(0);
+}
+
+.control-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.control-btn .icon {
+    font-size: 1.2em;
+}
+
+#recordBtn.recording {
+    background: linear-gradient(135deg, #ff0055 0%, #cc0044 100%);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 25px rgba(255, 0, 85, 0.7);
+    }
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 15px;
+}
+
+#volumeSlider {
+    width: 120px;
+    cursor: pointer;
+}
+
+.sound-categories {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.category-btn {
+    padding: 10px 20px;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.category-btn:hover {
+    background: rgba(0, 255, 255, 0.2);
+    border-color: rgba(0, 255, 255, 0.6);
+}
+
+.category-btn.active {
+    background: linear-gradient(135deg, #00d9ff 0%, #0099cc 100%);
+    border-color: #00d9ff;
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+}
+
+.recording-status {
+    text-align: center;
+    padding: 15px;
+    background: rgba(255, 0, 85, 0.2);
+    border: 2px solid rgba(255, 0, 85, 0.5);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.rec-indicator {
+    color: #ff0055;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0.3; }
+}
+
+.keyboard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.key {
+    width: 120px;
+    height: 100px;
+    background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(0, 153, 204, 0.1) 100%);
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.key::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.3) 0%, rgba(0, 217, 255, 0.3) 100%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.key:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0, 255, 255, 0.8);
+    box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+}
+
+.key:hover::before {
+    opacity: 1;
+}
+
+.key.active {
+    transform: scale(0.95);
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.4) 0%, rgba(0, 217, 255, 0.4) 100%);
+    border-color: #00ffff;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+}
+
+.key-label {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    z-index: 1;
+    color: #00ffff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+}
+
+.sound-label {
+    font-size: 0.75em;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    z-index: 1;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.key.hidden {
+    display: none;
+}
+
+.info-panel {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid rgba(0, 255, 255, 0.2);
+}
+
+.info-panel h3 {
+    color: #00d9ff;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+.info-panel ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.info-panel li {
+    padding: 8px 0;
+    padding-left: 25px;
+    position: relative;
+}
+
+.info-panel li::before {
+    content: '▶';
+    position: absolute;
+    left: 0;
+    color: #00d9ff;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9em;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+    
+    .key {
+        width: 90px;
+        height: 80px;
+    }
+    
+    .key-label {
+        font-size: 1.2em;
+    }
+    
+    .sound-label {
+        font-size: 0.65em;
+    }
+    
+    .controls {
+        flex-direction: column;
+    }
+    
+    .volume-control {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .key {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .keyboard-row {
+        gap: 5px;
+    }
+}
